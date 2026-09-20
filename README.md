@@ -1,9 +1,9 @@
 # Book Club Application
 Team Members: 
-Alyssa Schmidt
-Benjamin Nguyen
-Dre Harm
-Ethan Larson
+Alyssa Schmidt,
+Benjamin Nguyen,
+Dre Harm,
+Ethan Larson,
 Rachal Thornton
 
 Application Description: 
