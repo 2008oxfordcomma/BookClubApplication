@@ -6,7 +6,7 @@ public class Room {
 	private int id;
 	private ZonedDateTime start;
 	private ZonedDateTime end;
-	private String book; //placeholder book will probably be a object
+	private Book book; //placeholder book will probably be a object
 	private ArrayList<User> activeUsers;
 	private int numUsers;
 	private ArrayList<Comment> comments;
@@ -20,7 +20,7 @@ public class Room {
 	 * @param book book being discussed
 	 * @param meeting meeting attached to the room
 	 */
-	public Room(int id, ZonedDateTime start, ZonedDateTime end, String book, Meeting meeting) {
+	public Room(int id, ZonedDateTime start, ZonedDateTime end, Book book, Meeting meeting) {
 		this.id = id;
 		this.start = start;
 		this.end = end;
@@ -59,7 +59,7 @@ public class Room {
 	 * 
 	 * @return the book discussed in this room
 	 */
-	public String getBook() {
+	public Book getBook() {
 		return book;
 	}
 	
@@ -115,7 +115,7 @@ public class Room {
 	 * 
 	 * @param book - new book associated with this room
 	 */
-	public void setBook(String book) {
+	public void setBook(Book book) {
 		this.book = book;
 	}
 	
