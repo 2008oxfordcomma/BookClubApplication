@@ -1,7 +1,7 @@
--- drop database `BookDB`;
+drop database `BookDB`;
 
 CREATE database `BookDB`;
-USE `Jail System`;
+USE `BookDB`;
 
 
 CREATE TABLE `User`(
@@ -47,17 +47,6 @@ CREATE TABLE `Comment`(
     `room_id` INT NOT NULL,
     FOREIGN KEY(user_id) REFERENCES User(user_id),
     FOREIGN KEY(room_id) REFERENCES Room(room_id)
-);
-
-
-create table `visitor`(
-	`visitor_id` int primary key,
-    `first_name` varchar(255) NOT NULL,
-    `last_name` varchar(255) NOT NULL,
-    `relationship` varchar(255),
-    `phone_number` varchar(255),
-    `email` varchar(255),
-	`approved` boolean DEFAULT false
 );
 
 select @@version;
