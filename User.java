@@ -1,44 +1,50 @@
-/*This class handles users of the book worm application
- *created on 9/23/26
- */
 package bookClub;
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 
-public class Room {
+public class User {
 	private int id;
-	private ZonedDateTime start;
-	private ZonedDateTime end;
-	private Book book;
-	private ArrayList<User> activeUsers;
-	private int numUsers;
-	private ArrayList<Comment> comments;
-	private Meeting meeting;
-	private User currentTurn;
-	private int currentTurnIndex;
+	private String name;
+	private String username;
+	private String password;
+	private boolean loggedIn;
 	
 	/**
-	 * Constructor for room class
-	 * @param id unique room id
-	 * @param start start time
-	 * @param end end time
-	 * @param book book being discussed
-	 * @param meeting meeting attached to the room
+	 * Constructor for user class
+	 * @param id unique user id
+	 * @param name user name
+	 * @param username the name that appear to other users
+	 * @param password password to log in
 	 */
-	public Room(int id, ZonedDateTime start, ZonedDateTime end, Book book, Meeting meeting) {
+	public User(int id, String name, String username, String password) {
 		this.id = id;
-		this.start = start;
-		this.end = end;
-		this.book = book;
-		this.meeting = meeting;
-		this.comments = new ArrayList<Comment>();
-		this.activeUsers = new ArrayList<User>();
-		numUsers = 0;
+		this.name = name;
+		this.username = username;
+		this.password = password;
+		this.loggedIn = true;
+	}
+	
+	/**
+	 * Constructor for guest users
+	 */
+	public User() {
+		this.id = 0;
+		this.name = "Guest";
+		this.loggedIn = false;
+	}
+	
+	/**
+	 * check if users are equal by ID
+	 */
+	public boolean equals(User user) {
+		if(user.getID() == this.id) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/**
 	 * 
-	 * @return unique room ID
+	 * @return unique user id
 	 */
 	public int getID() {
 		return id;
@@ -46,142 +52,44 @@ public class Room {
 	
 	/**
 	 * 
-	 * @return start time that the room will open
-	 */
-	public ZonedDateTime getStartTime() {
-		return start;
-	}
-	
-	/**
-	 * 
-	 * @return end time that the room will close
-	 */
-	public ZonedDateTime getEndTime() {
-		return end;
-	}
-	
-	/**
-	 * 
-	 * @return the book discussed in this room
-	 */
-	public Book getBook() {
-		return book;
-	}
-	
-	/**
-	 * 
-	 * @return list of users active in the room
-	 */
-	public ArrayList<User> getActiveUsers() {
-		return activeUsers;
-	}
-	
-	/**
-	 * 
-	 * @return list of comments posted in the room
-	 */
-	public ArrayList<Comment> getComments(){
-		return comments;
-	}
-	
-	/**
-	 * 
-	 * @return meeting associated with the room
-	 */
-	public Meeting getMeeting() {
-		return meeting;
-	}
-	
-	/**
-	 * 
-	 * @return the number of active users
+	 * @return real name of the user
 	 */ 
-	public int getNumUsers() {
-		return numUsers;
+	public String name() {
+		return name;
 	}
 	
 	/**
 	 * 
-	 * @return the user whose turn it is
+	 * @return username displayed to other users
 	 */
-	public User getCurrentTurn() {
-		return currentTurn;
+	public String username() {
+		return username;
 	}
 	
 	/**
 	 * 
-	 * @param start - new start time for the room to open
+	 * @return user's password
 	 */
-	public void setStartTime(ZonedDateTime start) {
-		this.start = start;
+	public String password() {
+		return password;
 	}
 	
 	/**
 	 * 
-	 * @param end - new end time for the room to close
+	 * @return true if the user is logged in false if not
 	 */
-	public void setEndTime(ZonedDateTime end) {
-		this.end = end;
+	public boolean isLoggedIn() {
+		return loggedIn;
 	}
 	
 	/**
 	 * 
-	 * @param book - new book associated with this room
+	 * @param loggedIn set users log in to true or false
 	 */
-	public void setBook(Book book) {
-		this.book = book;
-	}
-	
-	/**
-	 * 
-	 * @param user to be added to the room
-	 * @return true if user was added successfully
-	 */
-	public boolean join(User user) {
-		if(numUsers == meeting.MAX_USERS) {
-			return false;
-		}
-		activeUsers.add(user);
-		numUsers++;
-		return true;
-	}
-	
-	/**
-	 * 
-	 * @param user to be removed from active room users
-	 */
-	public void leave(User user) {
-		activeUsers.remove(user);
-		numUsers--;
-	}
-	
-	/**
-	 * 
-	 * @param comment to be posted in the room
-	 */
-	public void post(Comment comment) {
-		comments.add(comment);
-	}
-	
-	/**
-	 * 
-	 * @param comment to be removed from the room
-	 */
-	public void removeComment(Comment comment) {
-		comments.remove(comment);
-	}
-	
-	/**
-	 * Move to the next user turn
-	 */
-	public void nextTurn() {
-		if(currentTurnIndex<activeUsers.size()-1) {
-			currentTurnIndex++;
-			currentTurn = activeUsers.get(currentTurnIndex);
-		} else {
-			currentTurnIndex = 0;
-			currentTurn = activeUsers.get(0);
+	public void setLogIn(boolean loggedIn) {
+		this.loggedIn = loggedIn;
+		if(loggedIn == false) {
+			name = "Guest";
 		}
 	}
-	
 }
