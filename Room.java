@@ -1,3 +1,4 @@
+//handles the rooms for the bookworm application created 9/23/26
 package bookClub;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -6,11 +7,13 @@ public class Room {
 	private int id;
 	private ZonedDateTime start;
 	private ZonedDateTime end;
-	private Book book; //placeholder book will probably be a object
+	private Book book;
 	private ArrayList<User> activeUsers;
 	private int numUsers;
 	private ArrayList<Comment> comments;
 	private Meeting meeting;
+	private User currentTurn;
+	private int currentTurnIndex;
 	
 	/**
 	 * Constructor for room class
@@ -97,6 +100,14 @@ public class Room {
 	
 	/**
 	 * 
+	 * @return the user whose turn it is
+	 */
+	public User getCurrentTurn() {
+		return currentTurn;
+	}
+	
+	/**
+	 * 
 	 * @param start - new start time for the room to open
 	 */
 	public void setStartTime(ZonedDateTime start) {
@@ -157,4 +168,18 @@ public class Room {
 	public void removeComment(Comment comment) {
 		comments.remove(comment);
 	}
+	
+	/**
+	 * Move to the next user turn
+	 */
+	public void nextTurn() {
+		if(currentTurnIndex<activeUsers.size()-1) {
+			currentTurnIndex++;
+			currentTurn = activeUsers.get(currentTurnIndex);
+		} else {
+			currentTurnIndex = 0;
+			currentTurn = activeUsers.get(0);
+		}
+	}
+	
 }
