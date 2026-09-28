@@ -6,6 +6,7 @@ public class Comment {
 	private String text;
 	private ZonedDateTime time;
 	private Room room;
+	private User user;
 
 	/**
 	 * Constructor for the Comment class
@@ -14,11 +15,12 @@ public class Comment {
 	 * @param time the time the comment was posted
 	 * @param room the room the comment was posted in
 	 */
-	public Comment(int id, String text, ZonedDateTime time, Room room) {
+	public Comment(int id, String text, ZonedDateTime time, Room room,User user) {
 		this.id = id;
 		this.text = text;
 		this.time = time;
 		this.room = room;
+		this.user = user;
 	}
 	
 	/**
@@ -51,6 +53,14 @@ public class Comment {
 	 */
 	public Room getRoom() {
 		return room;
+	}
+	
+	/**
+	 * 
+	 * @return the user who posted this comment
+	 */
+	public User getUser() {
+		return user;
 	}
 	
 	/**
