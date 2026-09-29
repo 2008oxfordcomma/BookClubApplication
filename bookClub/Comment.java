@@ -1,7 +1,9 @@
 package bookClub;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 
-public class Comment {
+public class Comment implements Serializable {
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String text;
 	private ZonedDateTime time;

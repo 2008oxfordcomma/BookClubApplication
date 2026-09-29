@@ -1,13 +1,17 @@
 //handles the rooms for the bookworm application created 9/23/26
 package bookClub;
+import java.io.Serializable;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 
-public class Room {
+public class Room implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private ZonedDateTime start;
 	private ZonedDateTime end;
 	private Book book;
+	private int bookID;
 	private ArrayList<User> activeUsers;
 	private int numUsers;
 	private ArrayList<Comment> comments;
@@ -24,11 +28,12 @@ public class Room {
 	 * @param book book being discussed
 	 * @param meeting meeting attached to the room
 	 */
-	public Room(int id, ZonedDateTime start, ZonedDateTime end, Book book, Meeting meeting) {
+	public Room(int id, ZonedDateTime start, ZonedDateTime end, int bookID, Meeting meeting) {
 		this.id = id;
 		this.start = start;
 		this.end = end;
-		this.book = book;
+//		this.book = book;
+		this.bookID = bookID;
 		this.meeting = meeting;
 		this.comments = new ArrayList<Comment>();
 		this.activeUsers = new ArrayList<User>();

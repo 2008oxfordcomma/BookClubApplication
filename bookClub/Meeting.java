@@ -1,6 +1,9 @@
 package bookClub;
 
-public class Meeting {
+import java.io.Serializable;
+
+public class Meeting implements Serializable{
+	private static final long serialVersionUID = 1L;
 	public static int MAX_USERS = 10;
 	private int id;
 	private boolean active;
