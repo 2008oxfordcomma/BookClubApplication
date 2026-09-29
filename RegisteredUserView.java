@@ -107,10 +107,34 @@ public class RegisteredUserView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		panel_3.add(scrollPane, BorderLayout.CENTER);
 		
-		table = new JTable(data,headersRooms);
-		table_1 = new JTable(meetingsData,headersFutureRooms);
+		table = new JTable(data, headersRooms) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
+		
+		table_1 = new JTable(meetingsData, headersFutureRooms) {
+		    @Override
+		    public boolean isCellEditable(int row, int column) {
+		        return false;
+		    }
+		};
 		scrollPane_1.setViewportView(table_1);
 		scrollPane.setViewportView(table);
+
+		table.addMouseListener(new java.awt.event.MouseAdapter() {
+		    @Override
+		    public void mouseClicked(java.awt.event.MouseEvent e) {
+		        if (e.getClickCount() == 2) {
+		            int row = table.getSelectedRow();
+		            if (row >= 0) {
+		                Room r = bookworm.getRooms().get(row);
+		                new RoomView(bookworm, r).setVisible(true);
+		            }
+		        }
+		    }
+		});
 		
 		Component horizontalStrut_2 = Box.createHorizontalStrut(50);
 		panel_1.add(horizontalStrut_2, BorderLayout.CENTER);
