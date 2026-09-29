@@ -6,14 +6,16 @@ public class Meeting {
 	private boolean active;
 	private User[] users;
 	private User[] admins;
+	private Book book;
 	
 	/**
 	 * Constructor for the meeting class
 	 * @param active whether the meeting is currently active
 	 */
-	public Meeting(int id, boolean active) {
+	public Meeting(int id, boolean active, Book book) {
 		this.id = id;
 		this.active = active;
+		this.book = book;
 		this.users = new User[MAX_USERS];
 		this.admins = new User[MAX_USERS];
 	}
@@ -32,6 +34,14 @@ public class Meeting {
 	 */
 	public boolean active() {
 		return active;
+	}
+	
+	/**
+	 * 
+	 * @return the book associated with this meeting
+	 */
+	public Book getBook() {
+		return book;
 	}
 	
 	/**
