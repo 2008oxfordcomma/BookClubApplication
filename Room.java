@@ -14,6 +14,7 @@ public class Room {
 	private Meeting meeting;
 	private User currentTurn;
 	private int currentTurnIndex;
+	private boolean isActive;
 	
 	/**
 	 * Constructor for room class
@@ -32,6 +33,11 @@ public class Room {
 		this.comments = new ArrayList<Comment>();
 		this.activeUsers = new ArrayList<User>();
 		numUsers = 0;
+		if(start.isAfter(ZonedDateTime.now())) {
+			isActive = true;
+		} else {
+			isActive = false;
+		}
 	}
 	
 	/**
@@ -104,6 +110,14 @@ public class Room {
 	 */
 	public User getCurrentTurn() {
 		return currentTurn;
+	}
+	
+	/**
+	 * 
+	 * @return true if the meeting is active false if not
+	 */
+	public Boolean isActive() {
+		return isActive;
 	}
 	
 	/**
@@ -183,3 +197,4 @@ public class Room {
 	}
 	
 }
+
