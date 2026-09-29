@@ -1,3 +1,4 @@
+//Handles back end logic for rooms, users, etc created 9/28/26
 package bookClub;
 
 import java.time.ZonedDateTime;
@@ -10,6 +11,7 @@ public class Bookworm {
 	private ArrayList<Book> books; //list of books associated with rooms
 	private ArrayList<Meeting> meetings; //list of meetings associated with rooms
 	private ArrayList<Room> rooms; //list of possible rooms
+	private ArrayList<Room> futureRooms;
 	private Room activeRoom;  //room that is currently being looked at
 	private int currentAuthority; //privilege level 
 	private User user;  //the user associated with this client? Depends on how this works with the client
@@ -25,7 +27,7 @@ public class Bookworm {
 		System.out.println("Password: ");
 		String pass = sc.nextLine();
 		System.out.println(bookworm.logIn(name,pass));
-		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true)));
+		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
 		for(Room r : bookworm.getRooms()) {
 			System.out.println(r.getBook());
 		}
@@ -41,12 +43,14 @@ public class Bookworm {
 	}
 	
 	/**
-	 * query the database to fill in the rooms
+	 * TODO: query the database to fill in the rooms
 	 */
 	public Bookworm() {
 		activeRoom = null;
 		currentAuthority = 0;
 		rooms = new ArrayList<Room>();
+		futureRooms = new ArrayList<Room>();
+		comments = new ArrayList<Comment>();
 		
 		
 	}
@@ -57,6 +61,22 @@ public class Bookworm {
 	 */
 	public ArrayList<Room> getRooms() {
 		return rooms;
+	}
+	
+	/**
+	 * 
+	 * @return the rooms available to view for the future
+	 */
+	public ArrayList<Room> getFutureRooms() {
+		return futureRooms;
+	}
+	
+	/**
+	 * 
+	 * @return the list of upcoming meetings
+	 */
+	public ArrayList<Meeting> getMeetings(){
+		return meetings;
 	}
 	
 	/**
@@ -132,7 +152,13 @@ public class Bookworm {
 	}
 	
 	public void addRoom(Room room) {
-		rooms.add(room);
+		if(room.isActive()) {
+			rooms.add(room);
+		} else {
+			futureRooms.add(room);
+		}
+	
+		
 	}
 	
 
