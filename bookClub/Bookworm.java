@@ -106,7 +106,7 @@ public class Bookworm {
 		Boolean valid = false;
 		if (valid) {
 			currentAuthority = 1;
-			//user = newUser() TODO: initialize this user with ID and info from database
+			user = new User(1,"test","",""); //TODO: initialize this user with ID and info from database
 			return true;
 		} else {
 			guestUser();
