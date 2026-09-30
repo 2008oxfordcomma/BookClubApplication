@@ -62,8 +62,14 @@ public class GuestUserView extends JFrame {
 		JLabel lblNewLabel = new JLabel("Bookworm");
 		panel.add(lblNewLabel);
 		
-		JButton btnLogInSignUp = new JButton("Log In/Sign Up");
-		panel.add(btnLogInSignUp, BorderLayout.EAST);
+		if(bookworm.getAuthority() == 0) {
+			JButton btnLogInSignUp = new JButton("Log In/Sign Up");
+			panel.add(btnLogInSignUp, BorderLayout.EAST);
+			
+		} else if(bookworm.getAuthority() == 1) {
+			JLabel lblUserGreeting = new JLabel("Hello " + bookworm.getUser().username() + "!");
+			panel.add(lblUserGreeting, BorderLayout.EAST);
+		}
 		
 		JPanel panel_1 = new JPanel();
 		contentPane.add(panel_1, BorderLayout.CENTER);
