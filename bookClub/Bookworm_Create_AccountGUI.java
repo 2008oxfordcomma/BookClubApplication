@@ -1,4 +1,5 @@
-package bookworm;
+//Primary Author: Benjamin
+package bookClub;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,6 +20,8 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 
 	    public Bookworm_Create_AccountGUI() {
 
+	    	Bookworm bookworm = new Bookworm();
+	    	
 	        // -----------------------------
 	        // Window Settings
 	        // -----------------------------
@@ -108,7 +111,12 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 	                JOptionPane.showMessageDialog(
 	                        this,
 	                        "Account created successfully!"
+	                      
 	                );
+	                bookworm.createAccount(1, username, password);
+	                GuestUserView guv = new GuestUserView(bookworm);
+	                guv.setVisible(true);
+	                this.setVisible(false);
 	            }
 	        });
 	    }
