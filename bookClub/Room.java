@@ -1,3 +1,4 @@
+//Primary Author: Alyssa 
 //handles the rooms for the bookworm application created 9/23/26
 package bookClub;
 import java.io.Serializable;
@@ -28,12 +29,11 @@ public class Room implements Serializable{
 	 * @param book book being discussed
 	 * @param meeting meeting attached to the room
 	 */
-	public Room(int id, ZonedDateTime start, ZonedDateTime end, int bookID, Meeting meeting) {
+	public Room(int id, ZonedDateTime start, ZonedDateTime end, Book book, Meeting meeting) {
 		this.id = id;
 		this.start = start;
 		this.end = end;
-//		this.book = book;
-		this.bookID = bookID;
+		this.book = book;
 		this.meeting = meeting;
 		this.comments = new ArrayList<Comment>();
 		this.activeUsers = new ArrayList<User>();
