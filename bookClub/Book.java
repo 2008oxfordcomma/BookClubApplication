@@ -4,17 +4,20 @@ import java.io.Serializable;
 
 public class Book implements Serializable {
 	private static final long serialVersionUID = 1L;
-	private int isbn;
+	private int bookID;
+	private String isbn;
 	private String title;
 	private String author;
 	
 	/**
 	 * constructor for book
+	 * @param bookID unique id for the book
 	 * @param isbn unique id number for the book
 	 * @param title title of the book
 	 * @param author author of the book
 	 */
-	public Book(int isbn, String title, String author) {
+	public Book(int bookID, String isbn, String title, String author) {
+		this.bookID = bookID;
 		this.isbn = isbn;
 		this.title = title;
 		this.author = author;
@@ -22,9 +25,17 @@ public class Book implements Serializable {
 	
 	/**
 	 * 
+	 * @return bookID number of the book
+	 */
+	public int getBookID() {
+		return bookID;
+	}
+	
+	/**
+	 * 
 	 * @return isbn number of the book
 	 */
-	public int getISBN() {
+	public String getISBN() {
 		return isbn;
 	}
 	
