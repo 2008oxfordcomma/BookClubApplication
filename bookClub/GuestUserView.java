@@ -1,3 +1,4 @@
+//Primary Author: Alyssa
 package bookClub;
 
 import java.awt.BorderLayout;
@@ -20,28 +21,14 @@ public class GuestUserView extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JTable table_1;
+	private Bookworm bookworm;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					GuestUserView frame = new GuestUserView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
 	 */
-	public GuestUserView() {
-		Bookworm bookworm = new Bookworm();
+	public GuestUserView(Bookworm bookworm) {
+		this.bookworm = bookworm;
 		//POPULATE TEST DATA DELETE LATER 
 		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
 		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
@@ -115,6 +102,7 @@ public class GuestUserView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		panel_3.add(scrollPane, BorderLayout.CENTER);
 		
+		//set tables to uneditable
 		table = new JTable(data, headersRooms) {
 		    @Override
 		    public boolean isCellEditable(int row, int column) {
@@ -130,7 +118,8 @@ public class GuestUserView extends JFrame {
 		};
 		scrollPane_1.setViewportView(table_1);
 		scrollPane.setViewportView(table);
-
+		
+		//mouse listener for clicking rows
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent e) {
