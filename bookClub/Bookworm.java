@@ -1,3 +1,4 @@
+//Primary Author: Alyssa 
 //Handles back end logic for rooms, users, etc created 9/28/26
 package bookClub;
 
@@ -117,6 +118,16 @@ public class Bookworm {
 	}
 	
 	/**
+	 * create a new user account ***NEEDS DATABASE CONNECTION***
+	 * @param username for the newly created account
+	 * @param password for the newly created account
+	 */
+	public void createAccount(int id,String username, String password) {
+		user = new User(id,"",username,password);
+		currentAuthority = 1;
+	}
+	
+	/**
 	 * view the rooms as a guest user
 	 */
 	public void guestUser() {
@@ -151,14 +162,16 @@ public class Bookworm {
 		}
 	}
 	
+	/**
+	 * 
+	 * @param room to be added to either active rooms or future rooms
+	 */
 	public void addRoom(Room room) {
 		if(room.isActive()) {
 			rooms.add(room);
 		} else {
 			futureRooms.add(room);
 		}
-	
-		
 	}
 	
 
