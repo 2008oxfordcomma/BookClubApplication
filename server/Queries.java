@@ -1,5 +1,4 @@
 // Authors: Ethan and Rachal
-// TODO: add methods for addUser(), getUser(), addUserToRoom(), removeUserFromRoom(), etc.
 
 // Imports
 package server;
@@ -42,11 +41,11 @@ public class Queries {
 		}
 	}
 	
-	// Retrieve a Book object
+	// Retrieve a single Book object
 	public static Book getBook(int bookID) {
 		// Book object and query
 		Book book = null;
-		String query = "SELECT book_id, title, author_name FROM Book Where book_id = " + bookID;
+		String query = "SELECT book_id, isbn, title, author_name FROM Book Where book_id = " + bookID;
 		
 		// Try to execute query and find book in database
 		try {
@@ -66,6 +65,32 @@ public class Queries {
 		return book;	
 	}
 	
+	// Retrieve all Book objects
+	public static ArrayList<Book> getBooks() {
+		// Arraylist of books and query
+		ArrayList<Book> books = new ArrayList<>();
+		String query = "SELECT book_id, isbn, title, author_name FROM Book";
+		
+		// Try to execute query and find all books in database
+		try {
+			ResultSet result = statement.executeQuery(query);
+			
+			// Create new Book object from database info
+			while(result.next()) {
+				Book book = new Book(
+						result.getInt("book_id"),
+						result.getString("isbn"),
+						result.getString("title"),
+						result.getString("author_name"));
+				
+				books.add(book);
+			}
+		} catch (SQLException sqle) {
+			sqle.printStackTrace();
+		}
+		return books;	
+	}
+	
 	// Retrieve active rooms
     public static ArrayList<Room> getActiveRooms() {
     	ArrayList<Room> activeRooms = new ArrayList<>();
@@ -75,13 +100,17 @@ public class Queries {
 	    	ResultSet result = statement.executeQuery(query);
 	    	while(result.next()) {
 	    		int roomID = result.getInt("room_id");
+	    		int bookID = result.getInt("book_id");
 	    		ZonedDateTime startTime = result.getTimestamp("start_time").toInstant().atZone(ZoneId.of("UTC"));
 	    		ZonedDateTime endTime = null;
 	    		try {
 	    			endTime = result.getTimestamp("end_time").toInstant().atZone(ZoneId.of("UTC"));
 	    		} catch (NullPointerException npe) {}
-	    		int bookID = result.getInt("book_id");
-	    		activeRooms.add(new Room(roomID, startTime, endTime, bookID, null));
+	    		Book book = getBook(bookID);
+	    		
+	    		if (book != null) {
+	    			activeRooms.add(new Room(roomID, startTime, endTime, book, null));
+	    		}
 	    	}
     	} catch (SQLException sqle) {
     		sqle.printStackTrace();
@@ -90,42 +119,55 @@ public class Queries {
     }
     
     // Retrieve once specific room by ID
-    public static Room getRoom(int roomID) {
-    	// Room object and query
-    	Room room = null;
-    	String query = "SELECT room_id, start_time, end_time, book_id FROM Room WHERE room_id = " + roomID;
-    	
-    	// Try to execute query and find room in database
-    	try {
-    		ResultSet result = statement.executeQuery(query);
-    		while(result.next()) {
-    			int id = result.getInt("room_id");
-    			int bookID = result.getInt("book_id");
-    			
-    			Timestamp startTimestamp = result.getTimestamp("start_time");
-    			Timestamp endTimestamp = result.getTimestamp("end_time");
-    			
-    			ZonedDateTime startTime = startTimestamp.toInstant().atZone(ZoneId.of("UTC"));
-    			ZonedDateTime endTime = null;
-    			if (endTimestamp != null) {
-    				endTime = endTimestamp.toInstant().atZone(ZoneId.of("UTC"));
-    			}
-    			
-    			Book book = getBook(bookID);
-    			
-    			if (book != null) {
-    				boolean meetingActive = endTime == null || endTime.isAfter(ZonedDateTime.now());
-    				Meeting meeting  = new Meeting(id, meetingActive, book);
-    				room = new Room(id, startTime, endTime, book, meeting);
-    				room.getActiveUsers().addAll(getUsersInRoom(id));
-    				room.getComments().addAll(getCommentsByRoom(id, room));
-    			}
-    		}
-    	} catch (SQLException sqle) {
-    		sqle.printStackTrace();
-    	}
-    	return room;
-    }
+	public static Room getRoom(int roomID) {
+		Room room = null;
+	    int bookID;
+	    ZonedDateTime startTime;
+	    ZonedDateTime endTime;
+	    boolean meetingActive;
+	
+	    try {
+	        String query = "SELECT * FROM Room WHERE room_id = " + roomID;
+	        ResultSet result = statement.executeQuery(query);
+	
+	        if (!result.next()) {
+	            result.close();
+	            return null;
+	        }
+	
+	        // Get all values before running another query
+	        bookID = result.getInt("book_id");
+	
+	        startTime = result.getTimestamp("start_time")
+	            .toInstant().atZone(ZoneId.of("UTC"));
+	
+	        java.sql.Timestamp endTimestamp = result.getTimestamp("end_time");
+	        endTime = (endTimestamp == null)
+	            ? null
+	            : endTimestamp.toInstant().atZone(ZoneId.of("UTC"));
+	
+	        meetingActive = (endTime == null);
+	
+	        result.close();
+	
+	        Book book = getBook(bookID);
+	
+	        if (book == null) {
+	            return null;
+	        }
+	
+	        Meeting meeting = new Meeting(roomID, meetingActive, book);
+	        room = new Room(roomID, startTime, endTime, book, meeting);
+	
+	        room.getActiveUsers().addAll(getUsersInRoom(roomID));
+	        room.getComments().addAll(getCommentsByRoom(roomID, room));
+	
+	    } catch (SQLException sqle) {
+	        sqle.printStackTrace();
+	    }
+	
+	    return room;
+	}
     
     // Retrieve all comments for a room
     public static ArrayList<Comment> getCommentsByRoom(int roomID, Room room) {
@@ -185,11 +227,11 @@ public class Queries {
             ps.setString(2, text);
             ps.setInt(3, roomID);
 
-            int rowsAffected = ps.executeUpdate();
+            int rowsInserted = ps.executeUpdate();
 
             ps.close();
 
-            return rowsAffected == 1;
+            return rowsInserted == 1;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -249,5 +291,100 @@ public class Queries {
             e.printStackTrace();
         }
        return moderator;
+    }
+    
+    // Add user to database
+    public static boolean addUser(String username, String firstName, String lastName, String password) {
+    	// Query to insert user into User table
+    	String query = "INSERT INTO User (username, first_name, last_name, password) "
+    			+ "VALUES (?, ?, ?, ?)";
+    	
+    	// Try to insert user into User table
+    	try {
+    		PreparedStatement ps = statement.getConnection().prepareStatement(query);
+    		ps.setString(1, username);
+    		ps.setString(2, firstName);
+    		ps.setString(3, lastName);
+    		ps.setString(4, password);
+    		
+    		int rowsInserted = ps.executeUpdate();
+    		ps.close();
+    		
+    		return rowsInserted > 0;
+    	} catch (SQLException sqle) {
+    		sqle.printStackTrace();
+    		return false;
+    	}
+    	
+    }
+    
+    // Get user by username
+    public static User getUser(String username) {
+    	// Query
+    	String query = "SELECT user_id, username, first_name, last_name, password "
+    			+ "FROM User WHERE username = ?";
+    	
+    	// Try to execute query
+    	try {
+    		PreparedStatement ps = statement.getConnection().prepareStatement(query);
+    		ps.setString(1, username);
+    		
+    		ResultSet result = ps.executeQuery();
+    		if (result.next()) {
+    			int id = result.getInt("user_id");
+    			String firstName = result.getString("first_name");
+    			String lastName = result.getString("last_name");
+    			String password = result.getString("password");
+    			
+    			String name = firstName + " " + lastName;
+    			
+    			User user = new User(id, name, username, password);
+    			return user;
+    		}
+    	} catch (SQLException sqle) {
+    		sqle.printStackTrace();
+    	}
+    	return null;
+    }
+    
+    // Add user to room
+    public static boolean addUserToRoom(int roomID, int userID) {
+    	// Query
+    	String query = "INSERT INTO Meeting (room_id, user_id) VALUES (?, ?)";
+    	
+    	// Try to execute query
+    	try {
+    		PreparedStatement ps = statement.getConnection().prepareStatement(query);
+    		ps.setInt(1, roomID);
+    		ps.setInt(2, userID);
+    		
+    		int rowsInserted = ps.executeUpdate();
+    		ps.close();
+    		
+    		return rowsInserted > 0;
+    	} catch (SQLException sqle) {
+    		sqle.printStackTrace();
+    		return false;
+    	}
+    }
+    
+    // Remove user from room
+    public static boolean removeUserFromRoom(int roomID, int userID) {
+    	// Query
+    	String query = "DELETE FROM Meeting WHERE room_id = ? AND user_id = ?";
+    	
+    	try {
+    		PreparedStatement ps = statement.getConnection().prepareStatement(query);
+    		ps.setInt(1, roomID);
+    		ps.setInt(2, userID);
+    		
+    		int rowsDeleted = ps.executeUpdate();
+    		ps.close();
+    		
+    		return rowsDeleted > 0;
+    	} catch (SQLException sqle) {
+    		sqle.printStackTrace();
+    		return false;
+    	}
     }
 }
