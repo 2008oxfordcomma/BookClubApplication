@@ -1,3 +1,4 @@
+//primary author: Benjamin
 package bookworm;
 
 import javax.swing.*;
@@ -14,7 +15,7 @@ public class Bookworm_LoginGUI extends JFrame {
 	private JButton loginButton;
 
 	public Bookworm_LoginGUI() {
-
+			Bookworm bookworm = new Bookworm();
 	        // -----------------------------
 	        // Window Settings
 	        // -----------------------------
@@ -103,6 +104,10 @@ public class Bookworm_LoginGUI extends JFrame {
 	                    "Create Account page"
 	            );
 	        });
+	        bookworm.logIn(username, password);
+            GuestUserView guv = new GuestUserView(bookworm);
+            guv.setVisible(true);
+            this.setVisible(false);
 	    }
 
 	// -----------------------------
