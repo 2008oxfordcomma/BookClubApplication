@@ -9,6 +9,7 @@ CREATE TABLE `User`(
     `username` varchar(50) UNIQUE NOT NULL,
     `first_name` varchar(255),
     `last_name` varchar(255)
+    `password` varchar(20) NOT NULL
 );
 
 CREATE TABLE `Moderator`(
