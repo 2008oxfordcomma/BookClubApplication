@@ -1,4 +1,4 @@
-package bookworm;
+package bookClub;
 
 public class Bookworm_Meeting {
 

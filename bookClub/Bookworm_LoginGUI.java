@@ -1,5 +1,5 @@
 //primary author: Benjamin
-package bookworm;
+package bookClub;
 
 import javax.swing.*;
 import java.awt.*;

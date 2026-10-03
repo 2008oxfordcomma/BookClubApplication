@@ -7,7 +7,7 @@ import java.awt.*;
 
 public class Bookworm_Create_AccountGUI extends JFrame {
 
-	    // Components
+		// Components
 	    private JLabel usernameLabel;
 	    private JLabel passwordLabel;
 	    private JLabel confirmPasswordLabel;
