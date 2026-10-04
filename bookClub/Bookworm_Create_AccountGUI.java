@@ -23,7 +23,7 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 	    	Bookworm bookworm = new Bookworm();
 	    	
 	        // -----------------------------
-	        // Window Settings
+	        // Window Settings 
 	        // -----------------------------
 	        setTitle("Create account");
 	        setSize(600, 350);
@@ -114,7 +114,7 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 	                      
 	                );
 	                bookworm.createAccount(1, username, password);
-	                GuestUserView guv = new GuestUserView();
+	                GuestUserView guv = new GuestUserView(bookworm);
 	                guv.setVisible(true);
 	                this.dispose();
 	            }
