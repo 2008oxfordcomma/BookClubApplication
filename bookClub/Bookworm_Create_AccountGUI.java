@@ -23,7 +23,7 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 	    	Bookworm bookworm = new Bookworm();
 	    	
 	        // -----------------------------
-	        // Window Settings 
+	        // Window Settings
 	        // -----------------------------
 	        setTitle("Create account");
 	        setSize(600, 350);
@@ -84,40 +84,28 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 	        // Create Button Action
 	        // -----------------------------
 	        createButton.addActionListener(e -> {
-
 	            String username = usernameField.getText();
 	            String password = new String(passwordField.getPassword());
-	            String confirmPassword =
-	                    new String(confirmPasswordField.getPassword());
+	            String confirmPassword = new String(confirmPasswordField.getPassword());
 
-	            if (username.isEmpty() ||
-	                password.isEmpty() ||
-	                confirmPassword.isEmpty()) {
-
-	                JOptionPane.showMessageDialog(
-	                        this,
-	                        "Please fill in all fields."
-	                );
-
-	            } else if (!password.equals(confirmPassword)) {
-
-	                JOptionPane.showMessageDialog(
-	                        this,
-	                        "Passwords do not match."
-	                );
-
-	            } else {
-
-	                JOptionPane.showMessageDialog(
-	                        this,
-	                        "Account created successfully!"
-	                      
-	                );
-	                bookworm.createAccount(1, username, password);
-	                GuestUserView guv = new GuestUserView(bookworm);
-	                guv.setVisible(true);
-	                this.dispose();
+	            if (username.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+	                JOptionPane.showMessageDialog(this, "Please fill in all fields.");
+	                return;
 	            }
+	            
+	            if (!password.equals(confirmPassword)) {
+	                JOptionPane.showMessageDialog(this, "Passwords do not match.");
+	                return;
+	            } 
+	            
+	            boolean created = bookworm.createAccount(username, password);
+	            
+	            if (created) {
+	            	JOptionPane.showMessageDialog(this, "Account created successfully!");
+	            	RegisteredUserView ruv = new RegisteredUserView(bookworm);
+	            	ruv.setVisible(true);
+	            	this.dispose();
+	            } else JOptionPane.showMessageDialog(this, "The username may be taken."); 
 	        });
 	    }
 	}
