@@ -1,3 +1,4 @@
+//primary author: Alyssa
 package bookClub;
 
 import javax.swing.*;
@@ -103,7 +104,8 @@ public class AdminView extends JFrame {
 		
 		JScrollPane scrollPane = new JScrollPane();
 		panel_3.add(scrollPane, BorderLayout.CENTER);
-		
+
+		//do not allow users to edit the data in the rows
 		table = new JTable(data, headersRooms) {
 		    @Override
 		    public boolean isCellEditable(int row, int column) {
@@ -118,6 +120,7 @@ public class AdminView extends JFrame {
 		    }
 		};
 		
+		//handles double click on row to enter the room
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -126,6 +129,7 @@ public class AdminView extends JFrame {
 		            if (row >= 0) {
 		                Room r = bookworm.getRooms().get(row);
 		                new RoomView(bookworm, r).setVisible(true);
+		                AdminView.this.dispose(); //have to specify admin view otherwise it wont dispose of the window
 		            }
 		        }
 		    }
@@ -136,7 +140,8 @@ public class AdminView extends JFrame {
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4, BorderLayout.SOUTH);
 		panel_4.setLayout(new BorderLayout(0, 0));
-		
+
+		//open the new meeting form
 		JButton btnSchedule = new JButton("Schedule Meeting");
 		panel_4.add(btnSchedule, BorderLayout.WEST);
 		btnSchedule.addMouseListener(new java.awt.event.MouseAdapter() {
