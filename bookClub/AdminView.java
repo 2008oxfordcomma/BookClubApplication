@@ -1,4 +1,3 @@
-//primary author: Alyssa
 package bookClub;
 
 import javax.swing.*;
@@ -7,6 +6,7 @@ import java.awt.EventQueue;
 import java.time.ZonedDateTime;
 
 import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableModel;
 
 import java.awt.Component;
 
@@ -16,19 +16,20 @@ public class AdminView extends JFrame {
 	private JPanel contentPane;
 	private JTable table;
 	private JTable table_1;
+	private Bookworm bookworm;
+	private JLabel lblAvailableRooms;
 
 	/**
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					AdminView frame = new AdminView();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+		EventQueue.invokeLater(() -> {
+			try {
+				Bookworm bookworm = new Bookworm();
+				bookworm.guestUser();
+				new AdminView(bookworm).setVisible(true);
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		});
 	}
@@ -36,11 +37,17 @@ public class AdminView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	
 	public AdminView() {
-		Bookworm bookworm = new Bookworm();
+		this(new Bookworm());
+	}
+	
+	public AdminView(Bookworm bookworm) {
+		this.bookworm = bookworm;
+		bookworm.reloadRooms();
 		//POPULATE TEST DATA DELETE LATER 
-		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
-		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
+//		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
+//		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
 		//POPULATE TEST DATA DELETE LATER ^^^^
 		setResizable(false);
 		setTitle("Bookworm");
@@ -75,52 +82,49 @@ public class AdminView extends JFrame {
 		JScrollPane scrollPane_1 = new JScrollPane();
 		panel_2.add(scrollPane_1, BorderLayout.CENTER);
 		
-		//Set up the table with the rooms
-		String [][] data = new String[bookworm.getRooms().size()][3];
-		int i = 0;
-		for(Room r : bookworm.getRooms()) {
-			data[i][0] = r.getBook().getTitle();
-			data[i][1] = r.getBook().getAuthor();
-			data[i][2] = " " + r.getActiveUsers().size();
-		}
-		String[] headersRooms = {"Title","Author","Users"};
+//		//Set up the table with the rooms
+//		String [][] data = new String[bookworm.getRooms().size()][3];
+//		int i = 0;
+//		for(Room r : bookworm.getRooms()) {
+//			data[i][0] = r.getBook().getTitle();
+//			data[i][1] = r.getBook().getAuthor();
+//			data[i][2] = " " + r.getActiveUsers().size();
+//		}
+//		String[] headersRooms = {"Title","Author","Users"};
+//		
+//		
+//		//Set up the table with the meetings
+//		String[][] meetingsData = new String[bookworm.getFutureRooms().size()][3];
+//		i = 0;
+//		for(Room fr : bookworm.getFutureRooms()) {
+//			meetingsData[i][0] = fr.getBook().getTitle();
+//			meetingsData[i][1] = fr.getBook().getAuthor();
+//			meetingsData[i][2] = fr.getStartTime().toString();
+//		}
 		
-		
-		//Set up the table with the meetings
-		String[][] meetingsData = new String[bookworm.getFutureRooms().size()][3];
-		i = 0;
-		for(Room fr : bookworm.getFutureRooms()) {
-			meetingsData[i][0] = fr.getBook().getTitle();
-			meetingsData[i][1] = fr.getBook().getAuthor();
-			meetingsData[i][2] = fr.getStartTime().toString();
-		}
-		String[] headersFutureRooms = {"Title","Author","Start Time"};
+		//String[] headersFutureRooms = {"Title","Author","Start Time"};
 		JPanel panel_3 = new JPanel();
 		panel_1.add(panel_3, BorderLayout.WEST);
 		panel_3.setLayout(new BorderLayout(0, 0));
 		
-		JLabel lblAvailableRooms = new JLabel("Available Rooms: " + bookworm.getRooms().size());
+	  lblAvailableRooms = new JLabel("Available Rooms: " + bookworm.getRooms().size());
 		panel_3.add(lblAvailableRooms, BorderLayout.NORTH);
 		
 		JScrollPane scrollPane = new JScrollPane();
 		panel_3.add(scrollPane, BorderLayout.CENTER);
-
-		//do not allow users to edit the data in the rows
-		table = new JTable(data, headersRooms) {
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		        return false;
-		    }
-		};
 		
-		table_1 = new JTable(meetingsData, headersFutureRooms) {
-		    @Override
-		    public boolean isCellEditable(int row, int column) {
-		        return false;
-		    }
-		};
+		table = new JTable(new DefaultTableModel(new Object[][]{}, new String[]{"Title", "Author", "Users"}) {
+			@Override public boolean isCellEditable(int r, int c) { 
+				return false; 
+			}
+		});
 		
-		//handles double click on row to enter the room
+		table_1 = new JTable(new DefaultTableModel(new Object[][]{}, new String[]{"Title", "Author", "Start Time"}) {
+			@Override public boolean isCellEditable(int r, int c) { 
+				return false; 
+			}
+		});
+		
 		table.addMouseListener(new java.awt.event.MouseAdapter() {
 		    @Override
 		    public void mouseClicked(java.awt.event.MouseEvent e) {
@@ -129,7 +133,6 @@ public class AdminView extends JFrame {
 		            if (row >= 0) {
 		                Room r = bookworm.getRooms().get(row);
 		                new RoomView(bookworm, r).setVisible(true);
-		                AdminView.this.dispose(); //have to specify admin view otherwise it wont dispose of the window
 		            }
 		        }
 		    }
@@ -140,17 +143,10 @@ public class AdminView extends JFrame {
 		JPanel panel_4 = new JPanel();
 		panel_2.add(panel_4, BorderLayout.SOUTH);
 		panel_4.setLayout(new BorderLayout(0, 0));
-
-		//open the new meeting form
+		
 		JButton btnSchedule = new JButton("Schedule Meeting");
 		panel_4.add(btnSchedule, BorderLayout.WEST);
-		btnSchedule.addMouseListener(new java.awt.event.MouseAdapter() {
-		    @Override
-		    public void mouseClicked(java.awt.event.MouseEvent e) {
-		        Bookworm_Meetings_Form meeting = new Bookworm_Meetings_Form();
-		        meeting.setVisible(true);   
-		    }
-		});
+		btnSchedule.addActionListener(e -> new Bookworm_Meetings_Form(bookworm, AdminView.this).setVisible(true));
 		
 		JButton btnRemove = new JButton("Remove Meeting");
 		panel_4.add(btnRemove, BorderLayout.EAST);
@@ -167,7 +163,43 @@ public class AdminView extends JFrame {
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		contentPane.add(horizontalStrut_1, BorderLayout.EAST);
-
 	}
+	
+	public void refreshTables() {
+    String[][] data = new String[bookworm.getRooms().size()][3];
+    int i = 0;
+    for (Room r : bookworm.getRooms()) {
+        data[i][0] = r.getBook().getTitle();
+        data[i][1] = r.getBook().getAuthor();
+        data[i][2] = " " + r.getActiveUsers().size();
+        i++;
+    }
+    table.setModel(new javax.swing.table.DefaultTableModel(
+            data, new String[]{"Title", "Author", "Users"}) {
+        @Override public boolean isCellEditable(int r, int c) { return false; }
+    });
+
+    String[][] meetingsData = new String[bookworm.getFutureRooms().size()][3];
+    i = 0;
+    for (Room fr : bookworm.getFutureRooms()) {
+        meetingsData[i][0] = fr.getBook().getTitle();
+        meetingsData[i][1] = fr.getBook().getAuthor();
+        meetingsData[i][2] = fr.getStartTime().toString();
+        i++;
+    }
+    
+    table_1.setModel(new javax.swing.table.DefaultTableModel(meetingsData, 
+    		new String[] {"Title", "Author", "Start Time"}) {
+		        @Override 
+		        public boolean isCellEditable(int r, int c) { 
+		        	return false; 
+		        }
+    		}
+    );
+
+    if (lblAvailableRooms != null) {
+        lblAvailableRooms.setText("Available Rooms: " + bookworm.getRooms().size());
+    }
+}
 
 }
