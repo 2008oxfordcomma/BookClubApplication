@@ -1,4 +1,5 @@
-//author: Benjamin
+// Primary Author: Benjamin
+
 package bookClub;
 
 import javax.swing.*;
@@ -19,8 +20,17 @@ public class Bookworm_Meetings_Form extends JFrame {
 
 	private JButton scheduleButton;
 	private JButton cancelButton;
+	
+	private final Bookworm bookworm;
+	private final AdminView parentView;
 
 	public Bookworm_Meetings_Form() {
+		this(new Bookworm(), null);
+	}
+	
+	public Bookworm_Meetings_Form(Bookworm bookworm, AdminView parentView) {
+		this.bookworm = bookworm;
+		this.parentView = parentView;
 
 		// -----------------------------
 		// Window Settings
@@ -101,24 +111,27 @@ public class Bookworm_Meetings_Form extends JFrame {
 		cancelButton.setBounds(322, 217, 170, 32);
 		add(cancelButton);
 
-		// -----------------------------
-		// Schedule Button Action
-		// -----------------------------
 		scheduleButton.addActionListener(e -> {
 
-			String bookName = bookNameField.getText();
-			String maxCapacity = maxCapacityField.getText();
-			String startDate = startDateField.getText();
-			String endDate = endDateField.getText();
+			String bookName = bookNameField.getText().trim();
+			String maxCapacity = maxCapacityField.getText().trim();
+			String startDate = startDateField.getText().trim();
+			String endDate = endDateField.getText().trim();
 
 			if (bookName.isEmpty() || maxCapacity.isEmpty() || startDate.isEmpty() || endDate.isEmpty()) {
-
-				JOptionPane.showMessageDialog(this, "Please fill in all fields.");
-
-			} else {
-
-				JOptionPane.showMessageDialog(this, "Meeting scheduled successfully!");
+				JOptionPane.showMessageDialog(this, "Please fill in all of the fields.");
+				return;
 			}
+			
+			Boolean ok = bookworm.scheduleMeeting(bookName, "", startDate, endDate);
+			
+			if (ok) {
+				JOptionPane.showMessageDialog(this, "The meeting was scheduled successfully!");
+				if (parentView != null) parentView.refreshTables();
+				dispose();
+			} else {
+          JOptionPane.showMessageDialog(this, "The meeting couldn't be scheduled, so please check the date format\n" + "(expected: YYYY-MM-DD HH:MM:SS)");
+			};
 		});
 
 		// -----------------------------
