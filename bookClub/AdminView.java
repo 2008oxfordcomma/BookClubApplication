@@ -1,18 +1,13 @@
 package bookClub;
 
+import javax.swing.*;
 import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import java.time.ZonedDateTime;
-import javax.swing.JFrame;
-import javax.swing.JPanel;
+
 import javax.swing.border.EmptyBorder;
-import javax.swing.JLabel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
+
 import java.awt.Component;
-import javax.swing.Box;
-import javax.swing.JComboBox;
-import javax.swing.JButton;
 
 public class AdminView extends JFrame {
 
@@ -43,8 +38,8 @@ public class AdminView extends JFrame {
 	public AdminView() {
 		Bookworm bookworm = new Bookworm();
 		//POPULATE TEST DATA DELETE LATER 
-		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
-		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
+		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
+		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
 		//POPULATE TEST DATA DELETE LATER ^^^^
 		setResizable(false);
 		setTitle("Bookworm");
@@ -144,6 +139,13 @@ public class AdminView extends JFrame {
 		
 		JButton btnSchedule = new JButton("Schedule Meeting");
 		panel_4.add(btnSchedule, BorderLayout.WEST);
+		btnSchedule.addMouseListener(new java.awt.event.MouseAdapter() {
+		    @Override
+		    public void mouseClicked(java.awt.event.MouseEvent e) {
+		        Bookworm_Meetings_Form meeting = new Bookworm_Meetings_Form();
+		        meeting.setVisible(true);   
+		    }
+		});
 		
 		JButton btnRemove = new JButton("Remove Meeting");
 		panel_4.add(btnRemove, BorderLayout.EAST);
