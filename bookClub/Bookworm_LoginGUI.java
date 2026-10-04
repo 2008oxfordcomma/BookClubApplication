@@ -13,9 +13,10 @@ public class Bookworm_LoginGUI extends JFrame {
 	private JPasswordField passwordField;
 	private JButton createAccountButton;
 	private JButton loginButton;
+	private Bookworm bookworm;
 
-	public Bookworm_LoginGUI() {
-			Bookworm bookworm = new Bookworm();
+	public Bookworm_LoginGUI(Bookworm bookworm) {
+			this.bookworm = bookworm;
 	        // -----------------------------
 	        // Window Settings
 	        // -----------------------------
@@ -96,9 +97,15 @@ public class Bookworm_LoginGUI extends JFrame {
 	                        
 	                );
 	                bookworm.logIn(username, password);
-	                GuestUserView guv = new GuestUserView();
-	                guv.setVisible(true);
-	                this.setVisible(false);
+	                if(bookworm.getAuthority() == 2) {
+	                	AdminView av = new AdminView();
+	                	av.setVisible(true);
+	                } else {
+	                	GuestUserView guv = new GuestUserView(bookworm);
+		                guv.setVisible(true);
+	                }
+	                
+	                this.dispose();
 	            }
 	        });
 
