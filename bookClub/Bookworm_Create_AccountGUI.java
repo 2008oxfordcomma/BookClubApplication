@@ -114,24 +114,10 @@ public class Bookworm_Create_AccountGUI extends JFrame {
 	                      
 	                );
 	                bookworm.createAccount(1, username, password);
-	                GuestUserView guv = new GuestUserView(bookworm);
+	                GuestUserView guv = new GuestUserView();
 	                guv.setVisible(true);
-	                this.setVisible(false);
+	                this.dispose();
 	            }
-	        });
-	    }
-
-	    // -----------------------------
-	    // Main Method
-	    // -----------------------------
-	    public static void main(String[] args) {
-
-	        SwingUtilities.invokeLater(() -> {
-
-	        	Bookworm_Create_AccountGUI createAccountGUI =
-	                    new Bookworm_Create_AccountGUI();
-
-	            createAccountGUI.setVisible(true);
 	        });
 	    }
 	}
