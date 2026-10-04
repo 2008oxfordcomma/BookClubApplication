@@ -29,11 +29,16 @@ public class GuestUserView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
+	
+	public GuestUserView() {
+		this(new Bookworm());
+	}
 	public GuestUserView(Bookworm bookworm) {
 		this.bookworm = bookworm;
+		bookworm.reloadRooms();
 		//POPULATE TEST DATA DELETE LATER 
-		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
-		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
+//		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
+//		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
 		//POPULATE TEST DATA DELETE LATER ^^^^
 		setResizable(false);
 		setTitle("Bookworm");
@@ -58,8 +63,7 @@ public class GuestUserView extends JFrame {
 			btnLogInSignUp.addMouseListener(new java.awt.event.MouseAdapter() {
 			    @Override
 			    public void mouseClicked(java.awt.event.MouseEvent e) {
-			    	Bookworm_LoginGUI logIn = new Bookworm_LoginGUI(bookworm);
-			    	logIn.setVisible(true);
+			    	new Bookworm_LoginGUI().setVisible(true);
 			    	GuestUserView.this.dispose(); //have to specify user view otherwise it wont dispose of the window
 			    }
 			});
@@ -90,6 +94,7 @@ public class GuestUserView extends JFrame {
 			data[i][0] = r.getBook().getTitle();
 			data[i][1] = r.getBook().getAuthor();
 			data[i][2] = " " + r.getActiveUsers().size();
+			i++;
 		}
 		String[] headersRooms = {"Title","Author","Users"};
 		
@@ -101,6 +106,7 @@ public class GuestUserView extends JFrame {
 			meetingsData[i][0] = fr.getBook().getTitle();
 			meetingsData[i][1] = fr.getBook().getAuthor();
 			meetingsData[i][2] = fr.getStartTime().toString();
+			i++;
 		}
 		String[] headersFutureRooms = {"Title","Author","Start Time"};
 		JPanel panel_3 = new JPanel();
@@ -166,5 +172,6 @@ public class GuestUserView extends JFrame {
             guestUser.setVisible(true);
         });
     }
-
+	
+	
 }
