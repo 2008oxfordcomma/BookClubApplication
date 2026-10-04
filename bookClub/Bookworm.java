@@ -190,7 +190,7 @@ public class Bookworm {
 						}
 						return false;
 			  } catch (Exception e) {
-			  	System.err.println("Couldn't the schedule meeting: " + e.getMessage());
+			  	System.err.println("Couldn't schedule the meeting: " + e.getMessage());
 					return false;
 				}
 	}
