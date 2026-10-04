@@ -29,8 +29,8 @@ public class GuestUserView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public GuestUserView() {
-		bookworm = new Bookworm();
+	public GuestUserView(Bookworm bookworm) {
+		this.bookworm = bookworm;
 		//POPULATE TEST DATA DELETE LATER 
 		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
 		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
@@ -58,11 +58,12 @@ public class GuestUserView extends JFrame {
 			btnLogInSignUp.addMouseListener(new java.awt.event.MouseAdapter() {
 			    @Override
 			    public void mouseClicked(java.awt.event.MouseEvent e) {
-			    	Bookworm_LoginGUI logIn = new Bookworm_LoginGUI();
+			    	Bookworm_LoginGUI logIn = new Bookworm_LoginGUI(bookworm);
 			    	logIn.setVisible(true);
+			    	GuestUserView.this.dispose(); //have to specify user view otherwise it wont dispose of the window
 			    }
 			});
-			this.dispose();
+			
 		} else if(bookworm.getAuthority() == 1) {
 			JLabel lblUserGreeting = new JLabel("Hello " + bookworm.getUser().username() + "!");
 			panel.add(lblUserGreeting, BorderLayout.EAST);
@@ -161,7 +162,7 @@ public class GuestUserView extends JFrame {
 
         SwingUtilities.invokeLater(() -> {
 
-        	GuestUserView guestUser = new GuestUserView();
+        	GuestUserView guestUser = new GuestUserView(new Bookworm());
             guestUser.setVisible(true);
         });
     }
