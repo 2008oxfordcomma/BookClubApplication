@@ -81,8 +81,8 @@ public class Bookworm_LoginGUI extends JFrame {
 
 	        loginButton.addActionListener(e -> {
 
-	            String username = usernameField.getText();
-	            String password = new String(passwordField.getPassword());
+	        String username = usernameField.getText();
+	        String password = new String(passwordField.getPassword());
 
 	            if (username.isEmpty() || password.isEmpty()) {
 	                JOptionPane.showMessageDialog(
@@ -93,33 +93,20 @@ public class Bookworm_LoginGUI extends JFrame {
 	                JOptionPane.showMessageDialog(
 	                        this,
 	                        "Login successful!"
+	                        
 	                );
+	                bookworm.logIn(username, password);
+	                GuestUserView guv = new GuestUserView();
+	                guv.setVisible(true);
+	                this.setVisible(false);
 	            }
 	        });
 
 	        createAccountButton.addActionListener(e -> {
-
-	            JOptionPane.showMessageDialog(
-	                    this,
-	                    "Create Account page"
-	            );
+	        	Bookworm_Create_AccountGUI cag = new Bookworm_Create_AccountGUI();
+	        	cag.setVisible(true);
+	        	this.dispose();
 	        });
-	        bookworm.logIn(username, password);
-            GuestUserView guv = new GuestUserView(bookworm);
-            guv.setVisible(true);
-            this.setVisible(false);
+			
 	    }
-
-	// -----------------------------
-	// Main Method
-	// -----------------------------
-	public static void main(String[] args) {
-
-		SwingUtilities.invokeLater(() -> {
-
-			Bookworm_LoginGUI loginGUI = new Bookworm_LoginGUI();
-			loginGUI.setVisible(true);
-
-		});
-	}
 }
