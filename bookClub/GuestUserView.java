@@ -12,6 +12,8 @@ import javax.swing.JLabel;
 import javax.swing.JButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
+
 import java.awt.Component;
 import javax.swing.Box;
 
@@ -27,11 +29,11 @@ public class GuestUserView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public GuestUserView(Bookworm bookworm) {
-		this.bookworm = bookworm;
+	public GuestUserView() {
+		bookworm = new Bookworm();
 		//POPULATE TEST DATA DELETE LATER 
-		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
-		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"a book","an author"),new Meeting(0,true,new Book(0,"a book","an author"))));
+		bookworm.addRoom(new Room(0,ZonedDateTime.now(),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
+		bookworm.addRoom(new Room(0,ZonedDateTime.now().plusHours((long)1.0),ZonedDateTime.now().plusDays((long) 1.0),new Book(0,"0","a book","an author"),new Meeting(0,true,new Book(0,"0","a book","an author"))));
 		//POPULATE TEST DATA DELETE LATER ^^^^
 		setResizable(false);
 		setTitle("Bookworm");
@@ -52,7 +54,15 @@ public class GuestUserView extends JFrame {
 		if(bookworm.getAuthority() == 0) {
 			JButton btnLogInSignUp = new JButton("Log In/Sign Up");
 			panel.add(btnLogInSignUp, BorderLayout.EAST);
-			
+			//mouse listener for clicking rows
+			btnLogInSignUp.addMouseListener(new java.awt.event.MouseAdapter() {
+			    @Override
+			    public void mouseClicked(java.awt.event.MouseEvent e) {
+			    	Bookworm_LoginGUI logIn = new Bookworm_LoginGUI();
+			    	logIn.setVisible(true);
+			    }
+			});
+			this.dispose();
 		} else if(bookworm.getAuthority() == 1) {
 			JLabel lblUserGreeting = new JLabel("Hello " + bookworm.getUser().username() + "!");
 			panel.add(lblUserGreeting, BorderLayout.EAST);
@@ -146,5 +156,14 @@ public class GuestUserView extends JFrame {
 		contentPane.add(horizontalStrut_1, BorderLayout.EAST);
 
 	}
+	
+	public static void main(String[] args) {
+
+        SwingUtilities.invokeLater(() -> {
+
+        	GuestUserView guestUser = new GuestUserView();
+            guestUser.setVisible(true);
+        });
+    }
 
 }
