@@ -38,11 +38,11 @@ public class Room implements Serializable{
 		this.comments = new ArrayList<Comment>();
 		this.activeUsers = new ArrayList<User>();
 		numUsers = 0;
-		if(start.isAfter(ZonedDateTime.now())) {
-			isActive = true;
-		} else {
-			isActive = false;
-		}
+		
+		ZonedDateTime now = ZonedDateTime.now();
+   		boolean started  = (start == null) || !start.isAfter(now);
+    	boolean notEnded = (end == null) || end.isAfter(now);
+   		this.isActive = started && notEnded;
 	}
 	
 	/**
