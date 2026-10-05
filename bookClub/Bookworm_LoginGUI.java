@@ -96,14 +96,8 @@ public class Bookworm_LoginGUI extends JFrame {
 	                        "Login successful!"
 	                        
 	                );
-	                bookworm.logIn(username, password);
-	                if(bookworm.getAuthority() == 2) {
-	                	AdminView av = new AdminView();
-	                	av.setVisible(true);
-	                } else {
-	                	GuestUserView guv = new GuestUserView(bookworm);
-		                guv.setVisible(true);
-	                }
+	                if (bookworm.getAuthority() == 2) new AdminView(bookworm).setVisible(true);
+	                else new RegisteredUserView(bookworm).setVisible(true);
 	                
 	                this.dispose();
 	            }
