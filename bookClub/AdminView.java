@@ -163,6 +163,7 @@ public class AdminView extends JFrame {
 		
 		Component horizontalStrut_1 = Box.createHorizontalStrut(20);
 		contentPane.add(horizontalStrut_1, BorderLayout.EAST);
+		refreshTables();
 	}
 	
 	public void refreshTables() {
