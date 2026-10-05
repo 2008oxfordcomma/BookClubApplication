@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Timestamp;
+import java.sql.Types;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -20,6 +21,7 @@ import bookClub.Comment;
 import bookClub.Meeting;
 import bookClub.Book;
 import bookClub.User;
+
 
 
 public class Queries {
@@ -96,22 +98,30 @@ public class Queries {
     	ArrayList<Room> activeRooms = new ArrayList<>();
     	try {
 			String time = Instant.now().toString().replace('T', ' ').substring(0, 19);
-	    	String query = "SELECT * FROM Room WHERE end_time IS NULL OR end_time > '" + time + "'";
+	    	String query = "SELECT r.room_id, r.start_time, r.end_time, "
+            + "b.book_id, b.isbn, b.title, b.author_name "
+            + "FROM Room r "
+            + "JOIN Book b ON r.book_id = b.book_id "
+            + "WHERE r.end_time IS NULL OR r.end_time > '" + time + "'";
 	    	ResultSet result = statement.executeQuery(query);
+	    	System.out.println();
 	    	while(result.next()) {
 	    		int roomID = result.getInt("room_id");
-	    		int bookID = result.getInt("book_id");
+	    		//int bookID = result.getInt("book_id");
 	    		ZonedDateTime startTime = result.getTimestamp("start_time").toInstant().atZone(ZoneId.of("UTC"));
-	    		ZonedDateTime endTime = null;
-	    		try {
-	    			endTime = result.getTimestamp("end_time").toInstant().atZone(ZoneId.of("UTC"));
-	    		} catch (NullPointerException npe) {}
-	    		Book book = getBook(bookID);
-	    		
-	    		if (book != null) {
-	    			activeRooms.add(new Room(roomID, startTime, endTime, book, null));
-	    		}
+	    		Timestamp endTimestamp = result.getTimestamp("end_time");
+	    		ZonedDateTime endTime = (endTimestamp == null) ? null : endTimestamp.toInstant().atZone(ZoneId.of("UTC"));
+//	    		try {
+//	    			endTime = result.getTimestamp("end_time").toInstant().atZone(ZoneId.of("UTC"));
+//	    		} catch (NullPointerException npe) { }
+//	    		Book book = getBook(bookID);
+//	    		if (book != null) {
+//	    		}
+	    		Book book = new Book(result.getInt("book_id"), result.getString("isbn"), result.getString("title"), result.getString("author_name"));
+	    		System.out.println("adding new room");
+	    		activeRooms.add(new Room(roomID, startTime, endTime, book, null));
 	    	}
+	    			
     	} catch (SQLException sqle) {
     		sqle.printStackTrace();
     	}
@@ -260,7 +270,7 @@ public class Queries {
                 String firstName = result.getString("first_name");
                 String lastName = result.getString("last_name");
 
-                String name = String.join(" ", Objects.toString(firstName, ""), Objects.toString(lastName, ""));
+                String name = String.join(" ", Objects.toString(firstName, ""), Objects.toString(lastName, "")).trim();
 
                 User user = new User(userID, name.trim(), username, null);
                 users.add(user);
@@ -336,7 +346,7 @@ public class Queries {
     			String lastName = result.getString("last_name");
     			String password = result.getString("password");
     			
-    			String name = firstName + " " + lastName;
+    			String name = String.join(" ", Objects.toString(firstName, ""), Objects.toString(lastName, "")).trim();
     			
     			User user = new User(id, name, username, password);
     			return user;
@@ -387,4 +397,53 @@ public class Queries {
     		return false;
     	}
     }
+    
+    public static int findOrCreateBook(String title, String author) {
+      try {
+          PreparedStatement selectBookStatement = statement.getConnection().prepareStatement("SELECT book_id FROM Book WHERE title = ?");
+          selectBookStatement.setString(1, title);
+          ResultSet resultSet = selectBookStatement.executeQuery();
+          if (resultSet.next()) {
+              int bookID = resultSet.getInt("book_id");
+              selectBookStatement.close();
+              return bookID;
+          }
+          selectBookStatement.close();
+
+          PreparedStatement addBookStatement = statement.getConnection().prepareStatement("INSERT INTO Book (isbn, title, author_name) VALUES ('', ?, ?)", Statement.RETURN_GENERATED_KEYS);
+          addBookStatement.setString(1, title);
+          addBookStatement.setString(2, author);
+          addBookStatement.executeUpdate();
+
+          ResultSet keys = addBookStatement.getGeneratedKeys();
+          int newID = keys.next() ? keys.getInt(1) : -1;
+          addBookStatement.close();
+          return newID;
+      } catch (Exception e) {
+          e.printStackTrace();
+          return -1;
+      }
+  }
+
+  public static int addRoom(int bookID, String startTime, String endTime) {
+      try {
+          PreparedStatement addRoomStatment = statement.getConnection().prepareStatement("INSERT INTO Room (start_time, end_time, book_id) VALUES (?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
+          addRoomStatment.setString(1, startTime);
+          
+          if (endTime == null || endTime.isBlank()) addRoomStatment.setNull(2, Types.TIMESTAMP);
+          else addRoomStatment.setString(2, endTime);
+          
+          addRoomStatment.setInt(3, bookID);
+          addRoomStatment.executeUpdate();
+          
+          ResultSet keys = addRoomStatment.getGeneratedKeys();
+          int roomID = keys.next() ? keys.getInt(1) : -1;
+          addRoomStatment.close();
+          
+          return roomID;
+      } catch (SQLException e) {
+          e.printStackTrace();
+          return -1;
+      }
+  }
 }
