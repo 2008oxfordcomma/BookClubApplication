@@ -81,27 +81,30 @@ public class Bookworm_LoginGUI extends JFrame {
 	        // -----------------------------
 
 	        loginButton.addActionListener(e -> {
+	          String username = usernameField.getText();
+	          String password = new String(passwordField.getPassword());
 
-	        String username = usernameField.getText();
-	        String password = new String(passwordField.getPassword());
+	          if (username.isEmpty() || password.isEmpty()) {
+	              JOptionPane.showMessageDialog(this, "Please enter your username and password.");
+	              return;
+	          }
 
-	            if (username.isEmpty() || password.isEmpty()) {
-	                JOptionPane.showMessageDialog(
-	                        this,
-	                        "Please enter your username and password."
-	                );
-	            } else {
-	                JOptionPane.showMessageDialog(
-	                        this,
-	                        "Login successful!"
-	                        
-	                );
-	                if (bookworm.getAuthority() == 2) new AdminView(bookworm).setVisible(true);
-	                else new RegisteredUserView(bookworm).setVisible(true);
-	                
-	                this.dispose();
-	            }
-	        });
+	          boolean success = bookworm.logIn(username, password);
+
+	          if (success) {
+	              JOptionPane.showMessageDialog(this, "Login successful!");
+
+	              if (bookworm.getAuthority() == 2) {
+	                  new AdminView(bookworm).setVisible(true);          
+	              } else {
+	                  new RegisteredUserView(bookworm).setVisible(true); 
+	              }
+
+	              this.dispose();
+	          } else {
+	              JOptionPane.showMessageDialog(this, "Invalid username or password.");
+	          }
+	      });
 
 	        createAccountButton.addActionListener(e -> {
 	        	Bookworm_Create_AccountGUI cag = new Bookworm_Create_AccountGUI();
