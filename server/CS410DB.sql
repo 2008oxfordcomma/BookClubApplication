@@ -8,7 +8,7 @@ CREATE TABLE `User`(
     `user_id` INT AUTO_INCREMENT PRIMARY KEY,
     `username` varchar(50) UNIQUE NOT NULL,
     `first_name` varchar(255),
-    `last_name` varchar(255)
+    `last_name` varchar(255),
     `password` varchar(20) NOT NULL
 );
 
