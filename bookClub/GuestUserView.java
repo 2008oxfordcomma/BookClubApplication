@@ -63,7 +63,7 @@ public class GuestUserView extends JFrame {
 			btnLogInSignUp.addMouseListener(new java.awt.event.MouseAdapter() {
 			    @Override
 			    public void mouseClicked(java.awt.event.MouseEvent e) {
-			    	new Bookworm_LoginGUI().setVisible(true);
+			    	new Bookworm_LoginGUI(bookworm).setVisible(true);
 			    	GuestUserView.this.dispose(); //have to specify user view otherwise it wont dispose of the window
 			    }
 			});
