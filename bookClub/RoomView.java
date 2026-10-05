@@ -1,4 +1,4 @@
-/* Dre Harm
+/* Primary Author: Dre Harm
  * 9/29/26
  */
 
@@ -58,8 +58,7 @@ public class RoomView extends JFrame {
 		EventQueue.invokeLater(() -> {
 			Bookworm bw = new Bookworm();
 			bw.guestUser();
-			Room room = new Room(1, java.time.ZonedDateTime.now(), java.time.ZonedDateTime.now().plusHours(1), 1,
-					new Meeting(1, true, null));
+			Room room = new Room(1, java.time.ZonedDateTime.now(), java.time.ZonedDateTime.now().plusHours(1), new Book(0,"0","a book","an author"), new Meeting(1, true, null));
 			new RoomView(bw, room).setVisible(true);
 		});
 	}
@@ -86,6 +85,7 @@ public class RoomView extends JFrame {
 		JPanel topPanel = new JPanel(new BorderLayout(0, 0));
 		topPanel.add(new JLabel("Bookworm"), BorderLayout.WEST);
 
+		// VVVV This got fixed so it doesn't matter that much VVVV
 		// I'm not sure what was happening with the book either being an ID or an
 		// object, so since Room.getBook() may be null right now, it's falling back to the ID.
 		String bookInfo = (room.getBook() != null) ? room.getBook().getTitle() + "  by  " + room.getBook().getAuthor() : "Room #" + room.getID();
@@ -148,17 +148,21 @@ public class RoomView extends JFrame {
 		});
 	}
 
-	// in theory this should work, but I'm kind just guessing until we get actual
-	// registered users in
+	// in theory this should work, but I'm kind just guessing until we get actual registered users in
+	/**
+	 * {@summary redraws the user panel on the right side of the window based on room.getActiveUsers()} 
+	 */
 	private void refreshUserList() {
 		usersModel.clear();
 		ArrayList<User> users = room.getActiveUsers();
 		User turn = room.getCurrentTurn();
-		Meeting meeting = room.getMeeting();
+		Meeting meeting = room.getMeeting(); // just to check who the moderator is
 
 		if (users != null) {
 			for (User user : users) {
-				if (user == null) continue;
+				if (user == null) continue; // skip the blank spaces in the array
+				
+				// gets the username then tacks on mod or current turn label before displaying
 				String label = user.username();
 				if (isModerator(user, meeting)) label += "  (mod)"; // I also added a tag to show who the moderators are in the room
 				if (turn != null && turn.equals(user)) label += " <"; // we can change this to whatever looks best, but I wanted a way to show whose turn it is
@@ -169,7 +173,7 @@ public class RoomView extends JFrame {
 	}
 
 	/**
-	 * 
+	 * {@summary redraws the comment box based on room.getComments() }
 	 */
 	private void refreshCommentArea() {
 		StringBuilder stringbuilder = new StringBuilder();
@@ -184,10 +188,9 @@ public class RoomView extends JFrame {
 		chatArea.setText(stringbuilder.toString());
 		chatArea.setCaretPosition(chatArea.getDocument().getLength());
 	}
-
 	
 	/**
-	 * 
+	 * {@summary enables or disables the post and pass button, and the text field }
 	 */
 	private void updateInputState() {
 		// since I didn't want to make another view and not a lot of stuff changes between unregistered and registered users, I'm just enabling and disabling elements
@@ -204,7 +207,7 @@ public class RoomView extends JFrame {
 	}
 
 	/**
-	 * @return
+	 * {@summary Returns true if room.getCurrentTurn() is not null and equals the current user.}
 	 */
 	private boolean isMyTurn() {
 		User turn = room.getCurrentTurn();
@@ -212,9 +215,7 @@ public class RoomView extends JFrame {
 	}
 
 	/**
-	 * @param user
-	 * @param meeting
-	 * @return
+	 * {@summary returns true if any admin equals the given user.}
 	 */
 	private static boolean isModerator(User user, Meeting meeting) {
 		if (user == null || meeting == null) return false;
@@ -227,7 +228,7 @@ public class RoomView extends JFrame {
 	}
 
 	/**
-	 * 
+	 * {@summary Gets the text field and bails if empty. Otherwise it sends comment and clears the field.}
 	 */
 	private void postComment() {
 		if (outServer == null) return;
@@ -241,7 +242,7 @@ public class RoomView extends JFrame {
 	}
 
 	/**
-	 * 
+	 * {@summary Sends PASS to the server}
 	 */
 	private void passTurn() {
 		if (outServer == null) return;
@@ -249,18 +250,17 @@ public class RoomView extends JFrame {
 	}
 
 	/**
-	 * 
+	 * {@summary Tries to do some cleanup}
 	 */
 	private void disconnect() {
 		try {
 			if (outServer != null) outServer.println("QUIT");
-			
 			if (socket != null && !socket.isClosed()) socket.close();
 		} catch (Exception e) { }
 	}
 
 	/**
-	 * 
+	 * {@summary Opens a socket and wraps the output -> PrintWriter, input -> ObjectInputStream, then sends the join line}
 	 */
 	private void connectToRoom() {
 		try {
@@ -268,9 +268,9 @@ public class RoomView extends JFrame {
 			outServer = new PrintWriter(socket.getOutputStream(), true);
 			inServer = new ObjectInputStream(socket.getInputStream());
 
-			// to tell the server which room we want to go in, JOIN <roomID> <userID>
-			// *note: took this from Alyssa for consistency, but I'm using userID = 0 for
-			// guests. Not sure how this will act with other rooms
+			// to tell the server which room we want to go in, JOIN <roomID> <userID> 
+			// *note: took this from Alyssa for consistency, but I'm using userID = 0 for guests. Not sure how this will act with other rooms
+			
 			int UID = (user != null && user.isLoggedIn()) ? user.getID() : 0;
 			outServer.println("JOIN " + room.getID() + " " + UID);
 
@@ -279,29 +279,25 @@ public class RoomView extends JFrame {
 			listenerThread.start();
 
 		} catch (IOException e) {
-			JOptionPane.showMessageDialog(this, "Could not connect to BCServer on port " + SERVER_PORT + ":\n" + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(this, "Couldn't connect to BCServer on port " + SERVER_PORT + ":\n" + e.getMessage(), "There was a connection error", JOptionPane.ERROR_MESSAGE);
 		}
 	}
 
-	/**
-	 * 
-	 */
 	private void listen() {
 		try {
 			while (true) {
-				Object obj = inServer.readObject();
-				if (obj instanceof Room updated)
-					SwingUtilities.invokeLater(() -> applyRoomUpdate(updated));
-				else if (obj instanceof String msg)
-					SwingUtilities.invokeLater(() -> chatArea.append(msg + "\n"));
+				Object object = inServer.readObject();
+				if (object instanceof Room updated) SwingUtilities.invokeLater(() -> applyRoomUpdate(updated));
+				else if (object instanceof String msg) SwingUtilities.invokeLater(() -> chatArea.append(msg + "\n"));
 			}
-		} catch (Exception e) {
-		}
+		} catch (Exception e) {}
 	}
 
+	/**
+	 * {@summary By refreshing everything, it creates a live view}
+	 */
 	private void applyRoomUpdate(Room updated) {
-		if (updated != null)
-			this.room = updated;
+		if (updated != null) this.room = updated;
 		refreshUserList();
 		refreshCommentArea();
 		updateInputState();
